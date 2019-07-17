@@ -1,0 +1,20 @@
+api_platform:
+    mapping:
+        paths: ['%kernel.project_dir%/src/Entity']
+
+    # The title of the API.
+    title: 'symReact'
+
+    # The description of the API.
+    description: 'Ceci est une platform api faite en Symfony et React'
+
+    # The version of the API.
+    version: '0.1.0'
+
+    collection:
+        pagination:
+            enabled: false
+            items_per_page: 20
+            client_enabled: true
+            client_items_per_page: true
+            items_per_page_parameter_name: 'count'

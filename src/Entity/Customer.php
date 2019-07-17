@@ -2,44 +2,67 @@
 
 namespace App\Entity;
 
+use ApiPlatform\{Core\Annotation\ApiFilter,
+    Core\Bridge\Doctrine\Orm\Filter\SearchFilter,
+    Core\Annotation\ApiResource};
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CustomerRepository")
+ * @ApiResource(
+ *      normalizationContext={
+ *          "groups"={"customerRead"}
+ *     }
+ * )
+ * @ApiFilter(
+ *      SearchFilter::class,
+ *      properties={"firstName": "start", "lastName":"start", "company":"partial"}
+ * )
+ * @ApiFilter(
+ *      OrderFilter::class,
+ * )
  */
 class Customer
 {
     /**
      * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="UUID")
+     * @ORM\Column(type="guid", unique=true)
      */
+
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"invoiceRead"})
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"invoiceRead"})
      */
     private $lastName;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"customerRead","invoiceRead"})
      */
     private $email;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"customerRead","invoiceRead"})
      */
     private $company;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Invoice", mappedBy="customer")
+     * @Groups({"customerRead"})
      */
     private $invoices;
 
@@ -48,15 +71,42 @@ class Customer
      */
     private $user;
 
+    /**
+     * La fonction fait une reduce sur chaque invoice (Invoices est un arrayCollection
+     * qu'il faut transformer en array),
+     * pour le quel elle recupère son montant l'ajoute au total
+     * deja calculé, on initialise le total à 0.
+     *
+     * @return float
+     * @Groups({"customerRead"})
+     */
+    public function getTotalAmount(): float {
+        return array_reduce($this->invoices->toArray(), function(float $total, Invoice $invoice){
+            return $total+$invoice->getAmount();
+        }, 0);
+    }
+
+    /**
+     * Cette fonction calcule le montatnt totale des factures non payé par l'utilisateur
+     * Si la facture est payé ou annuler, on ne la prend pas encompte sinon on calcul
+     * @return float
+     * @Groups({"customerRead"})
+     */
+    public function getUnpaidAmount(): float {
+        return array_reduce($this->invoices->toArray(), function(float $total, Invoice $invoice){
+            return $total+(($invoice->getStatus() === "PAID"
+                    || $invoice->getStatus() === "CANCELLED")
+                    ?0
+                    :$invoice->getAmount()
+                );
+        },0);
+    }
+
     public function __construct()
     {
         $this->invoices = new ArrayCollection();
     }
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
 
     public function getFirstName(): ?string
     {
@@ -148,4 +198,17 @@ class Customer
 
         return $this;
     }
+
+    public function __toString(){
+        return (string) $this->getId();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
 }
