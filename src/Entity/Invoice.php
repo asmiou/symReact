@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Core\{Annotation\ApiFilter, Bridge\Doctrine\Orm\Filter\OrderFilter, Annotation\ApiResource};
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\InvoiceRepository")
@@ -13,10 +14,34 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     "pagination_enabled"=true,
  *     "pagination_items_per_page"=35,
  *     "order": {"amount": "desc"}
- *     },
+ *  },
  *  normalizationContext={
  *     "groups"={"invoiceRead"}
- *     }
+ *  },
+ *  denormalizationContext={
+ *      "disable_type_enforcement"=true
+ *  },
+ *  subresourceOperations={
+ *     "api_customer_invoices_get_subresource"={
+ *          "normalization_context"={
+ *              "groups"={"invoice_subResource"}
+ *          }
+ *      }
+ *  },
+ *  itemOperations={
+ *     "GET",
+ *     "PUT",
+ *     "DELETE",
+ *     "increment"={
+ *          "method"="POST",
+ *          "path"="/invoices/{id}/increment",
+ *          "controller"="App\Controller\InvoiceIncrementationController",
+ *          "swagger_context"={
+ *              "summary"="Increment une facture",
+ *              "description"="Incrément la réference de la facture lors de la création d'une nouvelle facture"
+ *          }
+ *      }
+ *   },
  * )
  * @ApiFilter(
  *      OrderFilter::class,
@@ -35,19 +60,35 @@ class Invoice
 
     /**
      * @ORM\Column(type="float")
-     * @Groups({"invoiceRead", "customerRead"})
+     * @Groups({"invoiceRead", "customerRead", "invoice_subResource"})
+     * @Assert\GreaterThan(
+     *     value=0,
+     *     message="Le montant ne peut pas être null ou inférieur à zéro"
+     * )
+     * @Assert\Type(
+     *     type="numeric",
+     *     message="Le montant doit être numérique"
+     * )
+     *
      */
     private $amount;
 
     /**
      * @ORM\Column(type="datetime")
-     * @Groups({"invoiceRead", "customerRead"})
+     * @Groups({"invoiceRead", "customerRead", "invoice_subResource"})
+     * @Assert\DateTime(
+     *      message="La date doit être au format YYYY-MM-DD"
+     * )
      */
     private $sentAt;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"invoiceRead", "customerRead"})
+     * @Groups({"invoiceRead", "customerRead", "invoice_subResource"})
+     * @Assert\Choice(
+     *     choices={"SENT","PAID","CANCELLED"},
+     *     message="Le status est incorrecte, il doit être SENT PAID ou CANCELLED"
+     * )
      */
     private $status;
 
@@ -59,7 +100,10 @@ class Invoice
 
     /**
      * @ORM\Column(type="integer")
-     * @Groups({"invoiceRead"})
+     * @Groups({"invoiceRead", "invoice_subResource" })
+     * @Assert\NotBlank(
+     *      message="La reférence est obligation"
+     * )
      */
     private $reference;
 
@@ -77,7 +121,7 @@ class Invoice
         return $this->amount;
     }
 
-    public function setAmount(float $amount): self
+    public function setAmount($amount): self
     {
         $this->amount = $amount;
 
@@ -89,7 +133,7 @@ class Invoice
         return $this->sentAt;
     }
 
-    public function setSentAt(\DateTimeInterface $sentAt): self
+    public function setSentAt($sentAt): self
     {
         $this->sentAt = $sentAt;
 

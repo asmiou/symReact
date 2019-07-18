@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\{Core\Annotation\ApiFilter,
+    Core\Annotation\ApiSubresource,
     Core\Bridge\Doctrine\Orm\Filter\SearchFilter,
     Core\Annotation\ApiResource};
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
@@ -10,6 +11,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CustomerRepository")
@@ -39,18 +41,33 @@ class Customer
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"invoiceRead"})
+     * @Assert\NotBlank(
+     *      message="Le prenom est obligation"
+     * )
+     * @Assert\Length(min= 3,
+     *     minMessage="Le pronom est trop cout, il doit avoir au moins 3 caractères"
+     * )
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"invoiceRead"})
+     * @Assert\NotBlank(
+     *      message="Le nom st obligation"
+     * )
+     * @Assert\Length(min= 3,
+     *     minMessage="Le nom est trop cout, il doit avoir au moins 3 caractères"
+     * )
      */
     private $lastName;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"customerRead","invoiceRead"})
+     * @Assert\NotBlank(
+     *      message="L'email du customer est obligation"
+     * )
      */
     private $email;
 
@@ -63,11 +80,15 @@ class Customer
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Invoice", mappedBy="customer")
      * @Groups({"customerRead"})
+     * @ApiSubresource(
+     *
+     * )
      */
     private $invoices;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="customers")
+     * @Groups({"customerRead","invoiceRead"})
      */
     private $user;
 
