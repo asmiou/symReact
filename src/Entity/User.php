@@ -6,15 +6,23 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
+ * @UniqueEntity(
+ *     "email",
+ *     message="Cette adresse email existe deja"
+ * )
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @ApiResource(
  *     collectionOperations={"post"},
- *     itemOperations={"get"}
+ *     itemOperations={"get"},
+ *     normalizationContext={
+ *          "groups"={"UserRead"}
+ *     }
  * )
  */
 class User implements UserInterface
@@ -30,8 +38,11 @@ class User implements UserInterface
      * @Assert\NotBlank(
      *      message="L'email du customer est obligation"
      * )
+     * @Assert\Email(
+     *      message="L'email doit être au format valide!"
+     * )
      * @ORM\Column(type="string", length=180, unique=true)
-     * @Groups({"customerRead", "invoiceRead","invoice_subResource"})
+     * @Groups({"customerRead", "invoiceRead","invoice_subResource", "UserRead"})
      */
     private $email;
 
@@ -41,6 +52,13 @@ class User implements UserInterface
     private $roles = [];
 
     /**
+     * @Assert\NotBlank(
+     *      message="Veuillez renseigner un mot de passe"
+     * )
+     * @Assert\Length(
+     *     min="6",
+     *     minMessage="Le mot de passe est trop court! Au moins 3 caractères."
+     * )
      * @var string The hashed password
      * @ORM\Column(type="string")
      */
@@ -48,7 +66,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"customerRead", "invoiceRead", "invoice_subResource"})
+     * @Groups({"customerRead", "invoiceRead", "invoice_subResource", "UserRead"})
      * @Assert\NotBlank(
      *      message="Le prenom est obligation"
      * )
@@ -60,7 +78,7 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"customerRead", "invoiceRead", "invoice_subResource"})
+     * @Groups({"customerRead", "invoiceRead", "invoice_subResource", "UserRead"})
      * * @Assert\NotBlank(
      *      message="Le nom de famille est obligation"
      * )
