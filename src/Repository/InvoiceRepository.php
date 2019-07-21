@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Invoice;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
@@ -17,6 +18,19 @@ class InvoiceRepository extends ServiceEntityRepository
     public function __construct(RegistryInterface $registry)
     {
         parent::__construct($registry, Invoice::class);
+    }
+
+    public function findLastReferenceByUser(User $user){
+        $qureyResult = $this->createQueryBuilder('i')
+            ->select('i.reference')
+            ->join('i.customer', 'c')
+            ->where('c.user = :user')
+            ->setParameter('user', $user->getId())
+            ->orderBy('i.reference', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()->getSingleScalarResult()
+        ;
+        return ($qureyResult)?$qureyResult:0;
     }
 
     // /**

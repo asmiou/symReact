@@ -18,3 +18,9 @@ api_platform:
             client_enabled: true
             client_items_per_page: true
             items_per_page_parameter_name: 'count'
+
+    swagger:
+        api_keys:
+            apiKey:
+                name: Authorization
+                type: header

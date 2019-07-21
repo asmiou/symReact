@@ -29,3 +29,8 @@ services:
     # Déclaration du path de dénormalisation des type dateTime
     App\Serializer\PathDateTimeNormalizer:
         tags: [serializer.normalizer]
+
+    # JWT Custom
+    App\Events\JwtTokenCustom:
+        tags:
+            - {name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_created, method: updateJwtData}
