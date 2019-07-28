@@ -6,37 +6,36 @@ import 'bootstrap/js/dist/dropdown';
 // any CSS you require will output into a single css file (app.css in this case)
 require('../css/app.css');
 require('../sass/app.scss');
-require('../../node_modules/startbootstrap-sb-admin/js/sb-admin.min')
+
+require('../../node_modules/startbootstrap-sb-admin/js/sb-admin.min');
 
 import React from 'react';
 import ReactDom from "react-dom";
 import SideBar from "./Components/SideBar";
-import Nav from "./Components/Nav";
-import Content from "./Views/Content";
-import Footer from "./Components/footer";
+import NavBar from "./Components/NavBar";
+import Home from "./Views/Home";
+import Footer from "./Components/Footer";
 
-
+import {HashRouter, Switch, Route} from "react-router-dom";
+import Customers from "./Views/Customers";
+import Invoices from "./Views/Invoices";
 
 const App = () => {
     return (<>
-        {/*<div className="container pt-5">
-            <SideBar/>
-            <div className="container">
-                <NavBar />
-                <Home/>
+        <HashRouter>
+            <NavBar/>
+            <div id="wrapper">
+                <SideBar/>
+                <main>
+                    <Switch>
+                        <Route path="/customers" component={Customers}/>
+                        <Route path="/invoices" component={Invoices}/>
+                        <Route path="/" component={Home}/>
+                    </Switch>
+                </main>
+                <Footer/>
             </div>
-        </div>*/}
-        <Nav/>
-        <div id="wrapper">
-            <SideBar/>
-            <Content/>
-            <Footer/>
-        </div>
-        {/*Scroll to Top Button*/}
-        <a class="scroll-to-top rounded" href="#page-top">
-            <i class="fas fa-angle-up"></i>
-        </a>
-
+        </HashRouter>
     </>);
 };
 const root = document.querySelector('#app');

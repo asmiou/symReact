@@ -1,10 +1,8 @@
 import React from "react";
-const Content = (props) =>{
+const Home = (props) =>{
     return(
         <div id="content-wrapper">
-
             <div className="container-fluid">
-
                 {/*Breadcrumbs*/}
                 <ol className="breadcrumb">
                     <li className="breadcrumb-item">
@@ -27,7 +25,6 @@ const Content = (props) =>{
                 </div>
             </div>
         </div>
-
     );
 }
-export default Content;
+export default Home;

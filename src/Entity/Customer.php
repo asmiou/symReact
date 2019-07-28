@@ -34,13 +34,14 @@ class Customer
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="UUID")
      * @ORM\Column(type="guid", unique=true)
+     * @Groups({"customerRead"})
      */
 
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"invoiceRead"})
+     * @Groups({"invoiceRead","customerRead"})
      * @Assert\NotBlank(
      *      message="Le prenom est obligation"
      * )
@@ -52,7 +53,7 @@ class Customer
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"invoiceRead"})
+     * @Groups({"invoiceRead","customerRead"})
      * @Assert\NotBlank(
      *      message="Le nom st obligation"
      * )

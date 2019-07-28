@@ -1,11 +1,11 @@
 import React from "react";
-const Nav = (props)=>{
+const NavBar = (props)=>{
     return(
-        <nav className="navbar navbar-expand navbar-dark bg-dark static-top">
+        <nav className="navbar navbar-expand navbar-dark bg-primary static-top">
             <a className="navbar-brand mr-1" href="">SymReact</a>
-            <button className="btn btn-link btn-sm text-white order-1 order-sm-0" id="sidebarToggle" href="#">
+            {/*<button className="btn btn-link btn-sm text-white order-1 order-sm-0" id="sidebarToggle" href="#">
                 <i className="fas fa-bars"></i>
-            </button>
+            </button>*/}
             {/*Navbar Search*/}
             <form className="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
                 <div className="input-group">
@@ -18,7 +18,6 @@ const Nav = (props)=>{
                     </div>
                 </div>
             </form>
-
             {/*Navbar*/}
             <ul className="navbar-nav ml-auto ml-md-0">
                 <li className="nav-item dropdown no-arrow mx-1">
@@ -60,9 +59,7 @@ const Nav = (props)=>{
                     </div>
                 </li>
             </ul>
-
         </nav>
     );
 }
-
-export default Nav;
+export default NavBar;

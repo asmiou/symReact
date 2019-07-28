@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity(repositoryClass="App\Repository\InvoiceRepository")
  * @ApiResource(
  *  attributes={
- *     "pagination_enabled"=true,
+ *     "pagination_enabled"=false,
  *     "pagination_items_per_page"=35,
  *     "order": {"amount": "desc"}
  *  },
@@ -54,6 +54,7 @@ class Invoice
      * @ORM\Id()
      * @ORM\GeneratedValue(strategy="UUID")
      * @ORM\Column(type="guid", unique=true)
+     * @Groups({"invoiceRead"})
      */
 
     private $id;
