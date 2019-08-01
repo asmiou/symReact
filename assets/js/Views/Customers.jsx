@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import Pagination from "../Components/Pagination";
 import CustomersService from '../Services/CustomersService';
+import Loader from "react-loader-spinner";
 
 const Customers = (props) =>{
     const [customers, setCustomers] = useState([]);
@@ -88,7 +89,9 @@ const Customers = (props) =>{
                         </thead>
                         <tbody>
                         {customers.length === 0 && (
-                            <tr><td>Chargement ...</td></tr>
+                            <tr><td>
+                                <Loader type="ThreeDots" color="#1E4370" height={45} width={45}/>
+                            </td></tr>
                         )}
                         {paginatedCustomer.map(customer =>(
                             <tr className="table-dafault" key={customer.id}>

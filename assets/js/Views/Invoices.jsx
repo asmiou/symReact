@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import Pagination from "../Components/Pagination";
 import InvoicesService from '../Services/InvoicesService';
 import moment from 'moment';
+import Loader from "react-loader-spinner";
 
 const Invoices = (props) =>{
     const [invoices, setInvoices] = useState([]);
@@ -102,7 +103,9 @@ const Invoices = (props) =>{
                         </thead>
                         <tbody>
                         {invoices.length === 0 && (
-                            <tr><td>Chargement ...</td></tr>
+                            <tr><td>
+                                <Loader type="ThreeDots" color="#1E4370" height={45} width={45}/>
+                            </td></tr>
                         )}
                         {paginatedInvoice.map(invoice =>(
                             <tr className="table-dafault" key={invoice.id}>

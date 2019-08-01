@@ -1,10 +1,13 @@
 import React, {useContext, useState} from 'react';
 import LoginService from "../Services/LoginService";
 import AuthContext from "../Contexts/AuthContext";
+import Loader from 'react-loader-spinner'
 
 const Login = ({history}) => {
     const {isAuthenticated, setIsAuthenticated} = useContext(AuthContext);
     isAuthenticated?history.replace('/home'):'';
+
+    const [loading, setLoading] = useState(false);
 
     const [credentials, setCredentials] = useState({
         username: "hasmiou@mondemarcheur.com",
@@ -22,11 +25,13 @@ const Login = ({history}) => {
 
     const HandleSubmit = async (event)=>{
         event.preventDefault();
+        setLoading(true);
         try {
             await LoginService.authentication(credentials);
             setError("");
             setIsAuthenticated(true);
         }catch (error) {
+            setLoading(false);
             setError("Aucun compte ne possède cette adresse ou alors les informations ne correspondent pas.");
         }
     };
@@ -64,12 +69,12 @@ const Login = ({history}) => {
                                     <input name="remember" type="checkbox" value="Remember Me"/> Mémoriser
                                 </label>
                             </div>
-                            <div className="form-group">
-                                <button className="btn btn-primary float-right" type="submit">
+                            <div className="form-group d-flex justify-content-end">
+                                <button className="btn btn-primary float-left mr-2" type="submit">
                                     Se connecter
                                 </button>
+                                {loading && <Loader type="Rings" color="#1E4370" height={35} width={35}/>}
                             </div>
-
                         {/*</fieldset>*/}
                     </form>
                     {/*<div className="text-center text-primary">
