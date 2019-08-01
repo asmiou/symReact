@@ -59,19 +59,14 @@ const Invoices = (props) =>{
     const itemsPerPage = 10;
 
     const filteredInvoices = invoices.filter(
-        invoice =>{
-            invoice.customer.firstName.toLowerCase().includes(search)||
-            invoice.customer.lastName.toLowerCase().includes(search) ||
-            invoice.amount.toString().toLowerCase().startsWith(search)||
-            StatusLabel[invoice.status].toLowerCase().includes(search);
-    });
-    
-    //console.log('Factures: \n'+invoices)
-    //console.log('Taille filtés L54: \n'+filteredInvoices.length);
+        ({ customer, amount, status }) =>
+            customer.firstName.toLowerCase().includes(search)||
+            customer.lastName.toLowerCase().includes(search) ||
+            amount.toString().toLowerCase().startsWith(search)||
+            StatusLabel[status].toLowerCase().includes(search)
+    );
 
-    const paginatedInvoice = Pagination.getData(filteredInvoices.length>0?filteredInvoices:invoices, currentPage, itemsPerPage);
-    //const paginatedInvoice = Pagination.getData(invoices, currentPage, itemsPerPage);
-    //const paginatedInvoice = Pagination.getData(filteredInvoices, currentPage, itemsPerPage);
+    const paginatedInvoice = Pagination.getData(filteredInvoices, currentPage, itemsPerPage);
     const dataOptions = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
     return(
         <div id="content-wrapper">
@@ -111,7 +106,7 @@ const Invoices = (props) =>{
                         )}
                         {paginatedInvoice.map(invoice =>(
                             <tr className="table-dafault" key={invoice.id}>
-                                <td className="badge badge-primary">{invoice.reference}</td>
+                                <th className="text-primary">{invoice.reference}</th>
                                 <th scope="row">{invoice.customer.firstName+" "+invoice.customer.lastName.toUpperCase()}</th>
                                 <td className={'text-'+StatusClass[invoice.status]}>{StatusLabel[invoice.status]}</td>
                                 <td>{moment(invoice.sentAt).format('DD/MM/YYYY')}</td>
@@ -135,9 +130,7 @@ const Invoices = (props) =>{
                     <Pagination
                         currentPage={currentPage}
                         itemsPerPage={itemsPerPage}
-                        /*length={Invoices.length}*/
                         length={filteredInvoices.length}
-                        //length={filteredInvoices.length>0?filteredInvoices.length:invoices.length}
                         onChangePage={HandleChangePage}
                     />
                 </div>

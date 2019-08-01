@@ -41,24 +41,17 @@ const Customers = (props) =>{
         const value = event.currentTarget.value;
         setSearch(value.toLowerCase());
         setCurrentPage(1);
-        console.log('Recherche: '+value)
     };
 
     const filteredCustomers = customers.filter(
-        customer =>{
-            customer.firstName.toLowerCase().includes(search)||
-            customer.lastName.toLowerCase().includes(search) ||
-            customer.email.toLowerCase().includes(search)||
-            (customer.company && customer.company.toLowerCase().includes(search))
-    });
+        ({ firstName, lastName, company, email }) =>
+            firstName.toLowerCase().includes(search) ||
+            lastName.toLowerCase().includes(search) ||
+            (company && company.toLowerCase().includes(search)) ||
+            email.toLowerCase().includes(search)
+    );
 
-    console.log('Customers : \n'+customers);
-    console.log('Customers Filtrés: \n'+filteredCustomers);
-    console.log('Taille filtés L54: \n'+filteredCustomers.length);
-
-    const paginatedCustomer = Pagination.getData(filteredCustomers.length>0?filteredCustomers:customers, currentPage, itemsPerPage);
-    //const paginatedCustomer = Pagination.getData(customers, currentPage, itemsPerPage);
-    //const paginatedCustomer = Pagination.getData(filteredCustomers, currentPage, itemsPerPage);
+    const paginatedCustomer = Pagination.getData(filteredCustomers, currentPage, itemsPerPage);
 
     return(
         <div id="content-wrapper">
@@ -133,9 +126,7 @@ const Customers = (props) =>{
                     <Pagination
                         currentPage={currentPage}
                         itemsPerPage={itemsPerPage}
-                        /*length={customers.length}*/
-                        //length={filteredCustomers.length}
-                        length={filteredCustomers.length>0?filteredCustomers.length:customers.length}
+                        length={filteredCustomers.length}
                         onChangePage={HandleChangePage}
                     />
                 </div>

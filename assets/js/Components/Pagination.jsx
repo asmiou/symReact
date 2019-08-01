@@ -9,7 +9,7 @@ const  Pagination = ({currentPage, itemsPerPage, length, onChangePage})=>{
 
     return(<>
         {itemsPerPage < length &&
-        <div className="">
+        <div className="mx-auto mt-2">
             <ul className="pagination pagination-sm bg-dark">
                 <li className={"page-item "+(currentPage === 1 && "disabled")}>
                     <button
@@ -35,7 +35,8 @@ const  Pagination = ({currentPage, itemsPerPage, length, onChangePage})=>{
                     </button>
                 </li>
             </ul>
-        </div>}
+        </div>
+        }
     </>);
 };
 
