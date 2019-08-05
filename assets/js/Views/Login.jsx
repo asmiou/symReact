@@ -2,6 +2,8 @@ import React, {useContext, useState} from 'react';
 import LoginService from "../Services/LoginService";
 import AuthContext from "../Contexts/AuthContext";
 import Loader from 'react-loader-spinner'
+import Field from "../Components/Forms/Field";
+import {Link} from "react-router-dom";
 
 const Login = ({history}) => {
     const {isAuthenticated, setIsAuthenticated} = useContext(AuthContext);
@@ -39,48 +41,44 @@ const Login = ({history}) => {
     return(<>
         <div className="container">
             <div className="card card-login mx-auto mt-5">
-                <div className="card-header bg-primary text-white">Connexion</div>
+                <div className="card-header bg-primary">
+                    <h3 className="text-white">Connexion</h3>
+                </div>
                 <div className="card-body">
                     <form onSubmit={HandleSubmit}>
-                        {/*<fieldset>*/}
-                            <div className="form-group">
-                                <input
-                                    className={"form-control col-12 "+(error && "is-invalid")}
-                                    placeholder="E-mail"
-                                    name="username"
-                                    type="text"
-                                    value={credentials.username}
-                                    onChange={HandleChange}
-                                />
-                                {error && <p className="invalid-feedback">{error}</p> }
-                            </div>
-                            <div className="form-group">
-                                <input
-                                    className="form-control col-12"
-                                    placeholder="Password"
-                                    name="password"
-                                    type="password"
-                                    value={credentials.password}
-                                    onChange={HandleChange}
-                                />
-                            </div>
-                            <div className="checkbox">
-                                <label>
-                                    <input name="remember" type="checkbox" value="Remember Me"/> Mémoriser
-                                </label>
-                            </div>
-                            <div className="form-group d-flex justify-content-end">
+                        <Field
+                            name={"username"}
+                            value={credentials.username}
+                            onChange={HandleChange}
+                            placeholder={"Adresse Email de connexion"}
+                            type={"text"}
+                            error={error}
+                        />
+                        <Field
+                            name={"password"}
+                            value={credentials.password}
+                            onChange={HandleChange}
+                            placeholder={"Mot de passse de connexion"}
+                            type={"password"}
+                        />
+
+                        <div className="checkbox">
+                            <label>
+                                <input name="remember" type="checkbox" value="Remember Me"/> Mémoriser
+                            </label>
+                        </div>
+                        <div className="form-group d-flex justify-content-between">
+                            <Link to={"/register"} className={"btn"}>
+                                S'inscrire
+                            </Link>
+                            <div className={"d-flex justify-content-end"}>
                                 <button className="btn btn-primary float-left mr-2" type="submit">
                                     Se connecter
                                 </button>
                                 {loading && <Loader type="Rings" color="#1E4370" height={35} width={35}/>}
                             </div>
-                        {/*</fieldset>*/}
+                        </div>
                     </form>
-                    {/*<div className="text-center text-primary">
-                        <a className="d-block small mt-3" href="">Register an Account</a>
-                        <a className="d-block small" href="">Forgot Password?</a>
-                    </div>*/}
                 </div>
             </div>
         </div>

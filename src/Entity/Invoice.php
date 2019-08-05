@@ -87,8 +87,8 @@ class Invoice
      * @ORM\Column(type="string", length=255)
      * @Groups({"invoiceRead", "customerRead", "invoice_subResource"})
      * @Assert\Choice(
-     *     choices={"SENT","PAID","CANCELLED"},
-     *     message="Le status est incorrecte, il doit être SENT PAID ou CANCELLED"
+     *     choices={"SENT","PAID","CANCELED"},
+     *     message="Le status est incorrecte, il doit être SENT PAID ou CANCELED"
      * )
      */
     private $status;

@@ -10,7 +10,7 @@ const  Pagination = ({currentPage, itemsPerPage, length, onChangePage})=>{
     return(<>
         {itemsPerPage < length &&
         <div className="mx-auto mt-2">
-            <ul className="pagination pagination-sm bg-dark">
+            <ul className="pagination pagination-sm">
                 <li className={"page-item "+(currentPage === 1 && "disabled")}>
                     <button
                         className="page-link"

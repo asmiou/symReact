@@ -14,13 +14,13 @@ const NavBar = ({history})=>{
 
     return(
         <nav className="navbar navbar-expand navbar-dark bg-primary static-top">
-            <NavLink className="navbar-brand mr-1" to="/">SymReact</NavLink>
             <div className="text-white">
                 <i className="fab fa-symfony fa-2x"></i> <i className="fab fa-react fa-2x"></i>
             </div>
-            <button className="btn btn-link btn-sm text-white order-1 order-sm-0" id="sidebarToggle" to="#">
+            <NavLink className="navbar-brand mr-1" to="/">SymReact</NavLink>
+            {/*<button className="btn btn-link btn-sm text-white order-1 order-sm-0" id="sidebarToggle" to="#">
                 <i className="fas fa-bars"></i>
-            </button>
+            </button>*/}
             { isAuthenticated &&
                 <>
                     {/*Navbar Search*/}

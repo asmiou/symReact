@@ -2,7 +2,6 @@ $theme-darkly:'darkly';
 $theme-sandstone: 'sandstone';
 $theme-superhero: 'superhero';
 $theme-flatly: 'flatly';
-$dark-theme: true;
 
 /*Theme*/
 @import "~bootswatch/dist/flatly/variables";
@@ -16,4 +15,8 @@ $dark-theme: true;
 /*Loader*/
 @import "~react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 
+/*Select2*/
+@import "~select2/dist/css/select2.min.css";
 
+/*password-strength-meter*/
+@import "~password-strength-meter/dist/password.min.css";

@@ -3,16 +3,18 @@ import Pagination from "../Components/Pagination";
 import InvoicesService from '../Services/InvoicesService';
 import moment from 'moment';
 import Loader from "react-loader-spinner";
+import {Link} from "react-router-dom";
 
 const Invoices = (props) =>{
     const [invoices, setInvoices] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [search, setSearch] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const StatusClass = {
         PAID: 'success',
         SENT: 'primary',
-        CANCELED: 'danger'
+        CANCELLED: 'danger'
     };
 
     const StatusLabel= {
@@ -22,10 +24,13 @@ const Invoices = (props) =>{
     };
 
     const fetchInvoices = async ()=>{
+        setLoading(true);
         try {
             const data = await InvoicesService.findAll();
             setInvoices(data);
+            setLoading(false);
         }catch(error){
+            setLoading(false);
             console.log(error.response)
         }
     };
@@ -33,7 +38,7 @@ const Invoices = (props) =>{
         fetchInvoices();
     }, []);
 
-    const HandleDelete = async id => {
+    const handleDelete = async id => {
         //Copie du tableau
         const originalData = [...invoices];
         //1. Apprcoche Optimiste
@@ -46,11 +51,11 @@ const Invoices = (props) =>{
         }
     };
 
-    const HandleChangePage = page =>{
+    const handleChangePage = page =>{
         setCurrentPage(page);
     };
 
-    const HandleSearch = event =>{
+    const handleSearch = event =>{
         const value = event.currentTarget.value;
         setSearch(value.toLowerCase());
         setCurrentPage(1);
@@ -64,7 +69,7 @@ const Invoices = (props) =>{
             customer.firstName.toLowerCase().includes(search)||
             customer.lastName.toLowerCase().includes(search) ||
             amount.toString().toLowerCase().startsWith(search)||
-            StatusLabel[status].toLowerCase().includes(search)
+            (StatusLabel[status]&&StatusLabel[status].toLowerCase().includes(search))
     );
 
     const paginatedInvoice = Pagination.getData(filteredInvoices, currentPage, itemsPerPage);
@@ -79,17 +84,24 @@ const Invoices = (props) =>{
                     </li>
                     <li className="breadcrumb-item active">Factures</li>
                 </ol>
-                <div className="row m-2">
-                    <h1 className="mr-auto">Liste des factures</h1>
-                    <div className="form-inline form-group my-2 my-lg-0">
+                <div className="pb-2">
+                    <div className="d-flex justify-content-between">
+                        <h3 className="mr-auto">Liste des factures</h3>
+                        <Link to="/invoices/new" className="btn btn-lg btn-outline-primary">
+                            <i className="fas fa-user-plus"> </i> Nouvelle facture
+                        </Link>
+                    </div>
+                    <div className="p-2 ">
                         <input
-                            className="form-control mr-sm-2"
-                            onChange={HandleSearch}
-                            value={search}
+                            className="form-control col-4 mr-auto"
                             type="text"
+                            onChange={handleSearch}
+                            value={search}
                             placeholder="Rechercher ..."
                         />
                     </div>
+                </div>
+                <div className={"row"}>
                     <table className="table table-hover bg-dark-gray">
                         <thead>
                         <tr>
@@ -102,11 +114,10 @@ const Invoices = (props) =>{
                         </tr>
                         </thead>
                         <tbody>
-                        {invoices.length === 0 && (
-                            <tr><td>
-                                <Loader type="ThreeDots" color="#1E4370" height={45} width={45}/>
-                            </td></tr>
-                        )}
+                        {loading && (
+                            <tr><td><Loader type="ThreeDots" color="#1E4370" height={45} width={45}/></td></tr>
+                            ) || ((invoices.length === 0) && <tr><td><h5>Aucune facture trouvée</h5></td></tr>)
+                        }
                         {paginatedInvoice.map(invoice =>(
                             <tr className="table-dafault" key={invoice.id}>
                                 <th className="text-primary">{invoice.reference}</th>
@@ -119,11 +130,16 @@ const Invoices = (props) =>{
                                 </span>
                                 </td>
                                 <td>
-                                    <button
-                                        onClick={() => HandleDelete(invoice.id)}
-                                        className="btn btn-sm btn-outline-danger">
-                                        Supprimer
-                                    </button>
+                                    <div className="d-flex justify-content-between">
+                                        <Link to={"/invoices/"+invoice.id} className="btn btn-sm btn-outline-primary">
+                                            <i className="far fa-edit"> </i>
+                                        </Link>
+                                        <button
+                                            onClick={() => handleDelete(invoice.id)}
+                                            className="btn btn-sm btn-outline-danger">
+                                            <i className="fas fa-trash"> </i>
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>)
                         )}
@@ -134,7 +150,7 @@ const Invoices = (props) =>{
                         currentPage={currentPage}
                         itemsPerPage={itemsPerPage}
                         length={filteredInvoices.length}
-                        onChangePage={HandleChangePage}
+                        onChangePage={handleChangePage}
                     />
                 </div>
             </div>
