@@ -4,12 +4,14 @@ import InvoicesService from '../Services/InvoicesService';
 import moment from 'moment';
 import Loader from "react-loader-spinner";
 import {Link} from "react-router-dom";
+import {toast} from "react-toastify";
+import TableLoader from "../Components/Loaders/TableLoader";
 
 const Invoices = (props) =>{
     const [invoices, setInvoices] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [search, setSearch] = useState("");
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     const StatusClass = {
         PAID: 'success',
@@ -24,14 +26,13 @@ const Invoices = (props) =>{
     };
 
     const fetchInvoices = async ()=>{
-        setLoading(true);
         try {
             const data = await InvoicesService.findAll();
             setInvoices(data);
             setLoading(false);
         }catch(error){
             setLoading(false);
-            console.log(error.response)
+            toast.warn("Une erreur s'est produite lors du chargement des factures");
         }
     };
     useEffect(()=>{
@@ -45,9 +46,10 @@ const Invoices = (props) =>{
         setInvoices(invoices.filter(invoice => invoice.id !== id));
         try {
             await InvoicesService.del(id);
+            toast.info("La suppression s'est effectuée avec succès");
         }catch(error){
             setInvoices(originalData);
-            alert('Erreur de suppression');
+            toast.warn("Une erreur s'est produite lors de la suppression");
         }
     };
 
@@ -102,49 +104,50 @@ const Invoices = (props) =>{
                     </div>
                 </div>
                 <div className={"row"}>
-                    <table className="table table-hover bg-dark-gray">
-                        <thead>
-                        <tr>
-                            <th scope="col">Ref</th>
-                            <th scope="col">Client</th>
-                            <th scope="col">Status</th>
-                            <th scope="col">Emis</th>
-                            <th scope="col">Montant Total</th>
-                            <th scope="col">Actions</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {loading && (
-                            <tr><td><Loader type="ThreeDots" color="#1E4370" height={45} width={45}/></td></tr>
-                            ) || ((invoices.length === 0) && <tr><td><h5>Aucune facture trouvée</h5></td></tr>)
-                        }
-                        {paginatedInvoice.map(invoice =>(
-                            <tr className="table-dafault" key={invoice.id}>
-                                <th className="text-primary">{invoice.reference}</th>
-                                <th scope="row">{invoice.customer.firstName+" "+invoice.customer.lastName.toUpperCase()}</th>
-                                <td className={'text-'+StatusClass[invoice.status]}>{StatusLabel[invoice.status]}</td>
-                                <td>{moment(invoice.sentAt).format('DD/MM/YYYY')}</td>
-                                <td className="text-center">
-                                <span className="badge badge-primary">
-                                    {invoice.amount.toLocaleString()} €
-                                </span>
-                                </td>
-                                <td>
-                                    <div className="d-flex justify-content-between">
-                                        <Link to={"/invoices/"+invoice.id} className="btn btn-sm btn-outline-primary">
-                                            <i className="far fa-edit"> </i>
-                                        </Link>
-                                        <button
-                                            onClick={() => handleDelete(invoice.id)}
-                                            className="btn btn-sm btn-outline-danger">
-                                            <i className="fas fa-trash"> </i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>)
-                        )}
-                        </tbody>
-                    </table>
+                    <div className="table-responsive">
+                        <table className="table table-hover bg-dark-gray">
+                            <thead>
+                            <tr>
+                                <th scope="col">Ref</th>
+                                <th scope="col">Client</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Emis</th>
+                                <th scope="col">Montant Total</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                            </thead>
+                            {!loading && <tbody>
+                            {((invoices.length === 0) && <tr><td><h5>Aucune facture trouvée</h5></td></tr>)}
+                            {paginatedInvoice.map(invoice =>(
+                                <tr className="table-dafault" key={invoice.id}>
+                                    <th className="text-primary">{invoice.reference}</th>
+                                    <th scope="row">{invoice.customer.firstName+" "+invoice.customer.lastName.toUpperCase()}</th>
+                                    <td className={'text-'+StatusClass[invoice.status]}>{StatusLabel[invoice.status]}</td>
+                                    <td>{moment(invoice.sentAt).format('DD/MM/YYYY')}</td>
+                                    <td className="text-center">
+                                    <span className="badge badge-primary">
+                                        {invoice.amount.toLocaleString()} €
+                                    </span>
+                                    </td>
+                                    <td>
+                                        <div className="d-flex justify-content-between">
+                                            <Link to={"/invoices/"+invoice.id} className="btn btn-sm btn-outline-primary">
+                                                <i className="far fa-edit"> </i>
+                                            </Link>
+                                            <button
+                                                onClick={() => handleDelete(invoice.id)}
+                                                className="btn btn-sm btn-outline-danger">
+                                                <i className="fas fa-trash"> </i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>)
+                            )}
+                            </tbody>}
+                        </table>
+                        {<TableLoader/>}
+                        {/*{loading && <Loader type="ThreeDots" color="#1E4370" height={45} width={45}/>}*/}
+                    </div>
                     {/*Pagination*/}
                     <Pagination
                         currentPage={currentPage}

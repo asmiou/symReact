@@ -3,6 +3,8 @@ import Field from "../Components/Forms/Field";
 import {Link, NavLink} from "react-router-dom";
 import CustomersService from '../Services/CustomersService';
 import Loader from "react-loader-spinner";
+import {toast} from "react-toastify";
+import FormLoader from "../Components/Loaders/FormLoader";
 
 const Customer = ({match, history}) =>{
     const {id = "new"} = match.params;
@@ -57,10 +59,12 @@ const Customer = ({match, history}) =>{
                 await CustomersService.edit(id,customer);
                 setLoading(false);
                 setErrors({});
+                toast.success('Les modifications ont bien été enregistrées ');
             }else{
                 await  CustomersService.add(customer);
                 setLoading(false);
                 setErrors({});
+                toast.success('Le client est ajouté avec succes');
                 history.replace('/customers')
             }
         }catch({response}) {
@@ -73,6 +77,7 @@ const Customer = ({match, history}) =>{
                 });
                 setErrors(apiErrors);
             }
+            toast.error('Une erreur est rencontrée, le serveur ne reponds pas');
         }
     };
 
@@ -103,7 +108,9 @@ const Customer = ({match, history}) =>{
 {/*                            {(isEditing && loading &&
                                 <Loader type="ThreeDots" color="#1E4370" height={45} width={45}/>
                                 || '')}*/}
-                                <form onSubmit={handleSubmit} method={"post"}>
+                            {loading && <FormLoader/> }
+                            {!loading &&
+                            <form onSubmit={handleSubmit} method={"post"}>
                                 <div className="form-row">
                                     <div className="col-md-6">
                                         <Field
@@ -111,6 +118,7 @@ const Customer = ({match, history}) =>{
                                             value={customer.firstName}
                                             onChange={handleChange}
                                             placeholder={"Nom"}
+                                            label={"Nom"}
                                             type={"text"}
                                             error={errors.firstName}
                                         />
@@ -121,6 +129,7 @@ const Customer = ({match, history}) =>{
                                             value={customer.lastName}
                                             onChange={handleChange}
                                             placeholder={"Prénom"}
+                                            label={"Prénom"}
                                             type={"text"}
                                             error={errors.lastName}
                                         />
@@ -157,7 +166,7 @@ const Customer = ({match, history}) =>{
                                         {loading && <Loader type="Rings" color="#1E4370" height={35} width={35}/>}
                                     </div>
                                 </div>
-                            </form>
+                            </form>}
                         </div>
                     </div>
                 </div>

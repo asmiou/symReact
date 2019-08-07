@@ -18,5 +18,6 @@ $theme-flatly: 'flatly';
 /*Select2*/
 @import "~select2/dist/css/select2.min.css";
 
-/*password-strength-meter*/
-@import "~password-strength-meter/dist/password.min.css";
+/*React-toastify*/
+@import '~react-toastify/dist/ReactToastify.css';
+@import "../css/toastStyle.css";

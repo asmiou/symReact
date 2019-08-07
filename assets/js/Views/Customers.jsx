@@ -3,16 +3,17 @@ import Pagination from "../Components/Pagination";
 import CustomersService from '../Services/CustomersService';
 import Loader from "react-loader-spinner";
 import {Link} from "react-router-dom";
+import {toast} from "react-toastify";
+import TableLoader from "../Components/Loaders/TableLoader";
 
 const Customers = (props) =>{
     const [customers, setCustomers] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
     const [search, setSearch] = useState("");
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     const fetchCustomers = async ()=>{
-        setLoading(true);
         try {
             const data = await CustomersService.findAll();
             setCustomers(data);
@@ -33,9 +34,10 @@ const Customers = (props) =>{
         setCustomers(customers.filter(customer => customer.id !== id));
         try {
             await CustomersService.del(id);
+            toast.info('Suppression éffectuée avec succès');
         }catch(error){
             setCustomers(originalData);
-            alert('Erreur de suppression');
+            toast.error("Une erreur s'est produite lors de la suppression du client");
         }
     };
 
@@ -100,11 +102,8 @@ const Customers = (props) =>{
                                 <th scope="col">Actions</th>
                             </tr>
                             </thead>
-                            <tbody>
-                            {loading && (
-                                <tr><td><Loader type="ThreeDots" color="#1E4370" height={45} width={45}/></td></tr>
-                            ) || ((customers.length === 0) && <tr><td><h5>Aucune client trouvé</h5></td></tr>)
-                            }
+                            {!loading && <tbody>
+                            { ((customers.length === 0) && <tr><td><h5>Aucune client trouvé</h5></td></tr>) }
                             {paginatedCustomer.map(customer =>(
                                 <tr className="table-dafault" key={customer.id}>
                                     <th scope="row">{customer.firstName+" "+customer.lastName.toUpperCase()}</th>
@@ -140,8 +139,10 @@ const Customers = (props) =>{
                                     </td>
                                 </tr>)
                             )}
-                            </tbody>
+                            </tbody>}
                         </table>
+                        {loading && <TableLoader/>}
+                        {/*{loading && <Loader type="ThreeDots" color="#1E4370" height={45} width={45}/>}*/}
                     </div>
                     {/*Pagination*/}
                     <Pagination

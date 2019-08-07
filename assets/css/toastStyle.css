@@ -1,0 +1,84 @@
+.Toastify__toast-container {
+    pointer-events: auto;
+    margin: 0 0 6px;
+    min-width: 350px;
+    background-position: 15px center;
+    background-repeat: no-repeat;
+    color: #FFFFFF;
+    opacity: 0.9;
+    -ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=90);
+    filter: alpha(opacity=90);
+}
+
+.Toastify__toast {
+    height: 90px;
+    -moz-box-shadow: 0 0 12px #C5C8C6;
+    -webkit-box-shadow: 0 0 12px #C5C8C6;
+    box-shadow: 0 0 12px #C5C8C6;
+    -moz-border-radius: 5px 0 0 3px;
+    -webkit-border-radius: 5px 0 0 3px;
+    border-radius: 5px 0 0 3px;
+}
+
+.Toastify__toast--default {
+    background: #282A2E;
+    color: #aaa;
+}
+
+.Toastify__toast--info {
+    background: #282A2E;
+}
+
+.Toastify__toast--success {
+    background: #282A2E;
+}
+
+.Toastify__toast--warning {
+    background: #282A2E;
+}
+
+.Toastify__toast--error {
+    background: #282A2E;
+}
+
+.Toastify__toast--info::before{
+    font-family: "Font Awesome 5 Free";
+    font-weight: bold;
+    content: "\f05a";
+    color: #3498db;
+    padding: 3px;
+    display: block;
+    float: left;
+    font-size: 20px;
+}
+
+.Toastify__toast--success::before{
+    font-family: "Font Awesome 5 Free";
+    font-weight: bold;
+    content: "\f058";
+    color: #07bc0c;
+    padding: 3px;
+    display: block;
+    float: left;
+    font-size: 20px;
+}
+.Toastify__toast--warning::before{
+    font-family: "Font Awesome 5 Free";
+    font-weight: bold;
+    content: "\f06a";
+    color: #f1c40f;
+    padding: 3px;
+    display: block;
+    float: left;
+    font-size: 20px;
+}
+.Toastify__toast--error::before{
+    font-family: "Font Awesome 5 Free";
+    font-weight: bold;
+    content: "\f057";
+    color: #e74c3c;
+    padding:3px;
+    display: block;
+    float: left;
+    font-size: 20px;
+}

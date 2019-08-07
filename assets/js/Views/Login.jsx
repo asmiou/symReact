@@ -4,6 +4,7 @@ import AuthContext from "../Contexts/AuthContext";
 import Loader from 'react-loader-spinner'
 import Field from "../Components/Forms/Field";
 import {Link} from "react-router-dom";
+import {toast} from "react-toastify";
 
 const Login = ({history}) => {
     const {isAuthenticated, setIsAuthenticated} = useContext(AuthContext);
@@ -32,9 +33,11 @@ const Login = ({history}) => {
             await LoginService.authentication(credentials);
             setError("");
             setIsAuthenticated(true);
+            toast.info('Bienvenu à vous, heureux de vous retrouver!');
         }catch (error) {
             setLoading(false);
             setError("Aucun compte ne possède cette adresse ou alors les informations ne correspondent pas.");
+            //toast.error('Le serveur ne répond pas.');
         }
     };
 

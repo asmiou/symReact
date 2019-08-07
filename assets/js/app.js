@@ -9,13 +9,6 @@ import 'startbootstrap-sb-admin/js/sb-admin.min';
 //Select2
 import 'select2/dist/js/select2.full.min';
 
-//Password-strength-meter
-/*import 'password-strength-meter/dist/password.min';*/
-
-require('password-strength-meter/dist/password.min');
-
-import OptPassword from './Components/Forms/optionsPassword';
-
 // any CSS you require will output into a single css file (app.css in this case)
 require('../css/app.css');
 require('../sass/app.scss');
@@ -38,6 +31,8 @@ import Customer from "./Views/Customer";
 import Invoice from "./Views/invoice";
 import Register from "./Views/Register";
 
+import {toast, ToastContainer, Slide, Zoom, Flip, Bounce} from "react-toastify";
+
 LoginService.setup();
 
 const App = () => {
@@ -48,6 +43,7 @@ const App = () => {
     const contextValue = {
         isAuthenticated, setIsAuthenticated
     };
+
     return (<>
         <AuthContext.Provider value={contextValue}>
             <HashRouter>
@@ -69,8 +65,21 @@ const App = () => {
                 </div>
             </HashRouter>
         </AuthContext.Provider>
+        <ToastContainer
+            enableMultiContainer
+            position={toast.POSITION.BOTTOM_RIGHT}
+            autoClose={10000}
+            closeButton={false}
+            /*transition={Zoom}*/
+            /*draggable={false}*/
+            draggablePercent={60}
+            toastClassName="dark-toast"
+            hideProgressBar={true}
+        />
+
     </>);
 };
+
 $(document).ready(function() {
     $('.select2').select2();
 });

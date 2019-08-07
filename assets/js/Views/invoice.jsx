@@ -5,6 +5,8 @@ import InvoicesService from '../Services/InvoicesService';
 import Loader from "react-loader-spinner";
 import Select from "../Components/Forms/Select";
 import CustomersService from "../Services/CustomersService";
+import {toast} from "react-toastify";
+import FormLoader from "../Components/Loaders/FormLoader";
 
 const Invoice = ({match, history}) =>{
     const {id = "new"} = match.params;
@@ -21,7 +23,7 @@ const Invoice = ({match, history}) =>{
         customer:""
     });
 
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     const [errors, setErrors] = useState({
         amount:"",
@@ -36,25 +38,25 @@ const Invoice = ({match, history}) =>{
 
     //TODO: Revoire le chargement des clients pour qu'il puisse assigner le bon client pour la facture lors d'une modification
     const fetchCustomers = async () => {
-        setLoading(true);
         try{
             const data = await CustomersService.findAll();
             setCustomers(data);
             if(!invoice.customer) setInvoice({...invoice, customer:data[0].id})
             setLoading(false);
         }catch (error) {
-            console.log(error.response);
+            setLoading(false);
+            toast.warn("Une erreur s'est produite lors du chargement des factures");
         }
     };
 
     const fetchInvoice = async id => {
-        setLoading(true);
         try {
             const {amount, status, customer} = await InvoicesService.findById(id);
             setInvoice({amount, status, customer:customer.id});
             setLoading(false);
         }catch (error) {
-            console.log(error.response);
+            setLoading(false);
+            toast.warn("Une erreur s'est produite lors du chargement de la facture");
             history.replace('/invoices');
         }
     };
@@ -77,17 +79,18 @@ const Invoice = ({match, history}) =>{
 
     const handleSubmit = async (event) =>{
         event.preventDefault();
-        setLoading(true);
         //const data = {...invoice, customer:`/api/customers/${invoice.customer}`}
         try{
             if(isEditing){
                 await InvoicesService.edit(id,invoice);
                 setLoading(false);
                 setErrors({});
+                toast.success("Les modifications sont enregistrées avec succes");
             }else{
                 await  InvoicesService.add(invoice);
                 setLoading(false);
                 setErrors({});
+                toast.warn("L'ajout de la facture s'est éffectué avec succes");
                 history.replace('/invoices');
             }
         }catch({response}) {
@@ -100,6 +103,7 @@ const Invoice = ({match, history}) =>{
                 });
                 setErrors(apiErrors);
             }
+            toast.warn("Une erreur s'est produite, veillez réessayer");
         }
     };
 
@@ -128,6 +132,8 @@ const Invoice = ({match, history}) =>{
                             </div>
                         </div>
                         <div className="card-body">
+                            {loading && <FormLoader/> }
+                            {!loading &&
                                 <form onSubmit={handleSubmit}>
                                 <div className="form-row">
                                     <div className="col-md-3">
@@ -177,7 +183,7 @@ const Invoice = ({match, history}) =>{
                                         {loading && <Loader type="Rings" color="#1E4370" height={35} width={35}/>}
                                     </div>
                                 </div>
-                            </form>
+                            </form>}
                         </div>
                     </div>
                 </div>

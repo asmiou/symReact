@@ -4,6 +4,7 @@ import {Link} from "react-router-dom";
 import AuthContext from "../Contexts/AuthContext";
 import LoginService from "../Services/LoginService";
 import Loader from "react-loader-spinner";
+import {toast} from "react-toastify";
 
 const Register = ({history}) => {
     const {isAuthenticated, setIsAuthenticated} = useContext(AuthContext);
@@ -50,11 +51,7 @@ const Register = ({history}) => {
         try {
             await LoginService.register(user);
             setErrors({});
-
-            // TODO : Flash success
-            /*toast.success(
-                "Vous êtes désormais inscrit, vous pouvez vous connecter !"
-            );*/
+            toast.success("Vous êtes désormais inscrit, vous pouvez vous connecter !");
             history.replace("/");
         } catch ({response}){
             setLoading(false);
@@ -66,6 +63,7 @@ const Register = ({history}) => {
                 });
                 setErrors(apiErrors);
             }
+            //toast.warn("Une erreur s'est produite le serveur ne reponds pas");
         }
     };
 
