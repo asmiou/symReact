@@ -1,5 +1,6 @@
 import axios from 'axios';
 import jwtDecode from 'jwt-decode';
+import {USERS_URL, LOGIN_URL} from '../config';
 
 /**
  * Fonction de connexion
@@ -7,7 +8,7 @@ import jwtDecode from 'jwt-decode';
  * @returns {Promise<boolean>}
  */
 function authentication(credentials){
-    return axios.post('http://localhost:8000/api/login_check', credentials)
+    return axios.post(LOGIN_URL, credentials)
         .then(response => response.data.token)
         .then( token => {
             window.localStorage.setItem("authToken", token);
@@ -22,7 +23,7 @@ function authentication(credentials){
  * @returns {Promise<AxiosResponse<T>>}
  */
 function register(user) {
-    return axios.post('http://localhost:8000/api/users', user);
+    return axios.post(USERS_URL, user);
 }
 
 /**

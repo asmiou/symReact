@@ -145,7 +145,7 @@ const Invoices = (props) =>{
                             )}
                             </tbody>}
                         </table>
-                        {<TableLoader/>}
+                        {loading && <TableLoader/>}
                         {/*{loading && <Loader type="ThreeDots" color="#1E4370" height={45} width={45}/>}*/}
                     </div>
                     {/*Pagination*/}

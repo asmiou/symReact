@@ -1,13 +1,22 @@
 import axios from 'axios';
-let URL = 'http://localhost:8000/api/invoices';
+import CacheService from "./CacheService";
+import {INVOICE_URL} from '../config';
+let URL = INVOICE_URL;
 
 /**
  * Fetch all invoices from database
  * @returns {Promise<AxiosResponse<T>>}
  */
-function findAll(){
+async  function findAll(){
+    const cachedInvoices = await CacheService.get('invoices');
+    if(cachedInvoices) return cachedInvoices;
+
     return axios.get(URL)
-        .then( response => response.data['hydra:member']);
+        .then( response => {
+            const invoices = response.data['hydra:member'];
+            CacheService.set('invoices', invoices);
+            return invoices;
+        });
 }
 
 /**
@@ -16,7 +25,14 @@ function findAll(){
  * @returns {Promise<AxiosResponse<T>>}
  */
 function del(id){
-    return axios.delete(URL+`/${id}`);
+    return axios.delete(URL+`/${id}`).then(async response =>{
+        const cachedInvoices = await CacheService.get('invoices');
+        if(cachedInvoices){
+            cachedInvoices.set("invoices",cachedInvoices.filter(i => i.id !== id));
+        }
+
+        return response;
+    });
 }
 
 /**
@@ -24,9 +40,16 @@ function del(id){
  * @param id
  * @returns {Promise<AxiosResponse<T>>}
  */
-function findById(id){
+async function findById(id){
+    const cachedInvoice = await CacheService.get('invoice.'+id);
+    if(cachedInvoice) return cachedInvoice;
+
     return axios.get(URL+`/${id}`)
-        .then(response => response.data);
+        .then(response => {
+            const invoice = response.data;
+            CacheService.set('invoice.'+id,invoice);
+            return invoice;
+        });
 }
 /**
  * Add customer in database
@@ -35,9 +58,16 @@ function findById(id){
  */
 function add(data) {
     const invoice = {...data, customer:`/api/customers/${data.customer}`}
-    return axios.post(URL,invoice)
+    return axios.post(URL,invoice).then(async response =>{
+        const cachedInvoices = await CacheService.get('invoices');
+        if(cachedInvoices){
+            cachedInvoices.set("invoices",[...cachedInvoices, response.data]);
+        }
 
+        return response;
+    });
 }
+
 /**
  * Update customer information
  * @param id
@@ -45,9 +75,23 @@ function add(data) {
  * @returns {Promise<AxiosResponse<T>>}
  */
 function edit(id, data){
-    const invoice = {...data, customer:`/api/customers/${data.customer}`}
-    return axios.put(URL+`/${id}`,invoice)
-        .then(response => response.data);
+    const invoice = {...data, customer:`/api/customers/${data.customer}`};
+    return axios.put(URL+`/${id}`,invoice).then(async response => {
+        const cachedInvoices = await CacheService.get('invoices');
+        const cachedInvoice = await CacheService.get('invoice.'+id);
+
+        if(cachedInvoice){
+            CacheService.set('invoice.'+id, response.data);
+        }
+
+        if (cachedInvoices) {
+            const index = cachedInvoices.findIndex(i => i.id === id);
+            cachedInvoices[index] = response.data;
+            cachedInvoices.set("invoices", cachedInvoices);
+        }
+
+        return response;
+    });
 }
 
 export default {
