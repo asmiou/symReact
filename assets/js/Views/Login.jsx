@@ -13,8 +13,8 @@ const Login = ({history}) => {
     const [loading, setLoading] = useState(false);
 
     const [credentials, setCredentials] = useState({
-        username: "hasmiou@mondemarcheur.com",
-        password: "password"
+        username: "",
+        password: ""
     });
 
     const HandleChange = (event) =>{
