@@ -21,6 +21,20 @@ class InvoiceRepository extends ServiceEntityRepository
     }
 
     public function findLastReferenceByUser(User $user){
+        /*try{
+            $qureyResult = $this->createQueryBuilder('i')
+                ->select('i.reference')
+                ->join('i.customer', 'c')
+                ->where('c.user = :user')
+                ->setParameter('user', $user->getId())
+                ->orderBy('i.reference', 'DESC')
+                ->setMaxResults(1)
+                ->getQuery()->getSingleScalarResult()
+            ;
+            return ($qureyResult)?$qureyResult:0;
+        }catch (\Exception $e){
+            return 1;
+        }*/
         $qureyResult = $this->createQueryBuilder('i')
             ->select('i.reference')
             ->join('i.customer', 'c')
@@ -31,6 +45,7 @@ class InvoiceRepository extends ServiceEntityRepository
             ->getQuery()->getSingleScalarResult()
         ;
         return ($qureyResult)?$qureyResult:0;
+
     }
 
     // /**
